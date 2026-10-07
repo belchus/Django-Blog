@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #542c2c;
+}
+
+.site-header {
+    background-color: #222;
+    color: white;
+    padding: 20px;
+}
+
+.site-nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+.site-main {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: white;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #222;
+    color: white;
+}

@@ -1,0 +1,20 @@
+{%extends "base.html"%}
+
+{%block title%}
+Autores
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'crear_autor' %}">
+    Crear un nuevo autor
+</a>
+
+{% for autor in autores %}
+
+    <h2>{{ autor.username }}</h2>
+
+    <p>Nombre: {{ autor.nombre }}</p>
+    <p>Apellido: {{ autor.apellido }}</p>
+
+{% endfor %}
+{% endblock %}

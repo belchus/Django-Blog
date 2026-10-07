@@ -5,9 +5,41 @@
 {% endblock %}
 
 {% block content %}
- {% for post in posts %}
- <h2>{{post.titulo}} - {{post.autor}}</h2>
- 
- {% endfor %}
+<a href="{% url 'nuevo_post' %}">
+    Crear nuevo post
+</a>
 
+{% for post in posts %}
+
+    <h2>{{ post.titulo }}</h2>
+    <p> {{ post.contenido }}</p>
+    <p>Autor: {{ post.autor.username }}</p>
+
+    
+
+    <a href="{% url 'detalle_post' post.id %}">
+        Ver
+    </a>
+
+    <a href="{% url 'editar_post' post.id %}">
+        Editar
+    </a>
+
+    <form
+        method="POST"
+        action="{% url 'eliminar_post' post.id %}"
+        style="display: inline;"
+    >
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Eliminar
+        </button>
+
+    </form>
+
+    <hr>
+
+{% endfor %}
 {% endblock %}

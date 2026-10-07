@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Nuevo post</h1>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <label>Título:</label>
+
+    <input
+        type="text"
+        name="titulo"
+    >
+
+    <br><br>
+
+    <label>Contenido: <textarea name="contenido" id="contenido"></textarea></label>
+    <br><br>
+
+    <label>Autor:</label>
+
+    <select name="autor" id="autor" required>
+        <option value="">Seleccione un autor</option>
+        {% for autor in autores %}
+            <option value="{{ autor.id }}">{{ autor.username}}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <button type="submit">
+        Crear post
+    </button>
+
+</form>
+
+{% endblock %}
