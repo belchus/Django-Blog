@@ -7,6 +7,7 @@ class Autor(models.Model):
     email = models.EmailField()
     username = models.CharField(max_length=100,unique=True)
     password = models.CharField(max_length=100)
+    avatar = models.ImageField(upload_to="avatars/",blank=True,null=True)
 
     def __str__(self):
         return f"{self.nombre}{self.apellido}"
@@ -22,6 +23,15 @@ class Post (models.Model):
                ("archivado","Archivado")]
     estado = models.CharField(max_length=20,choices=ESTADOS,default="borrador")
     resumen = models.CharField(max_length=250,blank=True)
+    imagen = models.ImageField(upload_to="posts/",blank=True,null=True)
 
     def __str__(self):
         return self.titulo
+    
+class Comentario(models.Model):
+    contenido = models.TextField()
+    fecha = models.DateField(auto_now_add=True)
+    post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name="comentarios")
+
+    def __str__(self):
+        return self.contenido

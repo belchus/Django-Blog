@@ -5,7 +5,28 @@ Contacto
 {% endblock %}
 
 {% block content %}
-<h2>Este es el contacto estoy heredando</h2>
-<p>Heredo desde la base</p>
+<h1>
+    Tenes alguna consulta? Contactanos!
+</h1>
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        {{ form.nombre.label_tag }}
+        {{ form.nombre}}
+        {{ form.nombre.errors }}
+    </div>
+    <div>
+        {{ form.correo.label_tag }}
+        {{ form.correo}}
+        {{ form.correo.errors }}
+    </div>
+    <div>
+        {{ form.mensaje.label_tag }}
+        {{ form.mensaje}}
+        {{ form.mensaje.errors }}
+    </div>
+    {{ form.non_field_errors }}
 
+    <button type="submit">Enviar</button>
+</form>
 {%endblock%}

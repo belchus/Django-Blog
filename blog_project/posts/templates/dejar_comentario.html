@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Dejar un comentario</h1>
+<h3>{{post.titulo}}</h3>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <label for="contenido">Comentario</label>
+     <textarea name="contenido" id="contenido" placeholder="Escribi tu comentario..."></textarea>
+     <button type="submit" class="btn btn-primary">Publicar comentario</button>
+     <a href="{% url 'detalle_post' post.id %}" class="btn btn-primary">Cancelar</a>
+
+</form>
+
+{% endblock %}

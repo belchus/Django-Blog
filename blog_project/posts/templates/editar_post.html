@@ -23,6 +23,17 @@
     <textarea name="contenido" id="contenido">{{ post.contenido }}</textarea>
 
     <br><br>
+    {% if post.imagen %}
+     <p>Imagen actual:</p>
+     <img src="{{post.imagen.url}}" alt="Imagen del post">
+    {% endif %}
+
+    <div>
+        <label for="imagen" class="form-control">
+            Cambiar imagen
+        </label>
+        <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*">
+    </div>
 
 
     <button type="submit">

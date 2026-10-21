@@ -1,20 +1,61 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
+{% load static %}
 
-{%block title%}
-Autores
-{% endblock %}
+{% block title %}Autores{% endblock %}
 
 {% block content %}
-<a href="{% url 'crear_autor' %}">
-    Crear un nuevo autor
-</a>
+<div class="container py-4">
 
-{% for autor in autores %}
+  <!-- Encabezado -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Autores</h1>
+    <a href="{% url 'crear_autor' %}" class="btn btn-success">
+      + Crear un nuevo autor
+    </a>
+  </div>
 
-    <h2>{{ autor.username }}</h2>
+  <!-- Buscador -->
+  <form method="GET" class="row g-2 mb-4">
+    <div class="col-12 col-md">
+      <input type="text" name="buscar" class="form-control"
+             placeholder="Buscar autor"
+             value="{{ request.GET.buscar|default:'' }}">
+    </div>
+    <div class="col-12 col-md-auto">
+      <button type="submit" class="btn btn-primary w-100">Buscar</button>
+    </div>
+  </form>
 
-    <p>Nombre: {{ autor.nombre }}</p>
-    <p>Apellido: {{ autor.apellido }}</p>
+  <!-- Listado -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+    {% for autor in autores %}
+    <div class="col">
+      <div class="card h-100 shadow-sm text-center">
+        <img src="{{ autor.avatar.url}}"
+             class="card-img-top"
+             alt="Foto de {{ autor.username }}"
+             style="height: 200px; object-fit: cover;">
+        <div class="card-body">
+          <h5 class="card-title">{{ autor.username }}</h5>
+          <p class="card-text text-body-secondary">
+            {{ autor.nombre }} {{ autor.apellido }}
+          </p>
+        </div>
+        <div class="card-footer bg-transparent border-0 pb-3">
+          <a href="{% url 'perfil_autor' autor.id %}" class="btn btn-outline-primary btn-sm">
+            Ver perfil
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info text-center mb-0">
+        No se encontraron autores.
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
-{% endfor %}
+</div>
 {% endblock %}

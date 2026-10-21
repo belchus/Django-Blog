@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Perfil de {{ autor.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Perfil -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <div class="row align-items-center g-4">
+        <div class="col-12 col-md-auto text-center">
+          <img src="{{ autor.avatar.url }}" 
+               alt="Foto de {{ autor.username }}"
+               class="rounded-circle border"
+               style="width: 140px; height: 140px; object-fit: cover;">
+        </div>
+        <div class="col text-center text-md-start">
+          <h1 class="h3 mb-1">{{ autor.nombre }} {{ autor.apellido }}</h1>
+          <p class="text-body-secondary mb-2">@{{ autor.username }}</p>
+          {% if posts %}
+            <span class="badge text-bg-primary">{{ posts|length }} post{{ posts|length|pluralize }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts del autor -->
+  <h2 class="h4 mb-3">Posts de {{ autor.username }}</h2>
+
+  {% if posts %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for post in posts %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ post.titulo }}</h5>
+          <p class="card-text">{{ post.contenido|truncatewords:30 }}</p>
+        </div>
+        <div class="card-footer bg-transparent border-0 pb-3">
+          <a href="{% url 'detalle_post' post.id %}" class="btn btn-outline-primary btn-sm">
+            Ver post
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center mb-0">
+    Este autor todavía no publicó nada.
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
