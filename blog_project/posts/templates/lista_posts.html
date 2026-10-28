@@ -73,9 +73,10 @@
           </h6>
           <p class="card-text">{{ post.contenido|truncatewords:30 }}</p>
         </div>
-
+       
         <div class="card-footer bg-transparent d-flex gap-2">
           <a href="{% url 'detalle_post' post.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
+        {%if user.is_authenticated and post.autor.usuario_id == user.id %}
           <a href="{% url 'editar_post' post.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
 
           <form method="POST" action="{% url 'eliminar_post' post.id %}"
@@ -84,7 +85,9 @@
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
           </form>
+          {% endif %}
         </div>
+       
       </div>
     </div>
     {% empty %}

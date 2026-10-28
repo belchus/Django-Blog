@@ -1,13 +1,15 @@
 from django.db import models
 
+from django.conf import settings
+
 # Create your models here.
 class Autor(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     email = models.EmailField()
     username = models.CharField(max_length=100,unique=True)
-    password = models.CharField(max_length=100)
     avatar = models.ImageField(upload_to="avatars/",blank=True,null=True)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,blank=True,related_name="perfil_autor")
 
     def __str__(self):
         return f"{self.nombre}{self.apellido}"

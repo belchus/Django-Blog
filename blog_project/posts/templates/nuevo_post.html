@@ -20,14 +20,7 @@
     <label>Contenido: <textarea name="contenido" id="contenido"></textarea></label>
     <br><br>
 
-    <label>Autor:</label>
-
-    <select name="autor" id="autor" required>
-        <option value="">Seleccione un autor</option>
-        {% for autor in autores %}
-            <option value="{{ autor.id }}">{{ autor.username}}</option>
-        {% endfor %}
-    </select>
+  
 
     <br><br>
     <div>

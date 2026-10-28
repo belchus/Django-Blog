@@ -1,9 +1,51 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
-
-from .forms import ContactoForm
+from django.contrib.auth import login,logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .forms import ContactoForm, EditarPerfilForm, RegistroForm
 from .models import Autor, Comentario, Post
 
+
+# --------------------------------------------------
+# REGISTRO
+# --------------------------------------------------
+
+def registro(request):
+    if request.method == "POST":
+        form = RegistroForm(request.POST,request.FILES)
+
+        if form.is_valid():
+            usuario = form.save()
+
+            login(request,usuario)
+            return redirect("inicio")
+    else:
+        form = RegistroForm()
+    return render(request,"registro.html",{"form":form})
+
+# --------------------------------------------------
+# LOGIN
+# --------------------------------------------------
+def iniciar_sesion(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request,data = request.POST)
+        if form.is_valid():
+            usuario = form.get_user()
+            login(request,usuario)
+            return redirect("inicio")
+    else:
+        form = AuthenticationForm(request)
+    return render(request,"login.html",{"form":form})
+# --------------------------------------------------
+# LOGOUT
+# --------------------------------------------------
+@require_POST
+def cerrar_sesion(request):
+    logout(request)
+
+    return redirect("inicio")
 # --------------------------------------------------
 # INICIO
 # --------------------------------------------------
@@ -59,12 +101,38 @@ def lista_autores(request):
 # PERFIL DE AUTOR
 # --------------------------------------------------
 
+
 def perfil_autor(request,autor_id):
     autor = get_object_or_404(Autor,id = autor_id)
     posts = autor.posts.all()
 
     return render(request,"perfil_autor.html",{"autor":autor, "posts":posts})
 
+# --------------------------------------------------
+# EDITAR PERFIL DE AUTOR
+# --------------------------------------------------
+@login_required
+def mi_perfil(request):
+    autor = get_object_or_404(Autor,usuario=request.user)
+    if request.method == "POST":
+        form = EditarPerfilForm(request.POST,
+                                request.FILES,
+                                instance=autor)
+        if form.is_valid():
+            autor=form.save()
+
+            usuario = request.user
+            usuario.first_name = autor.nombre
+            usuario.last_name = autor.apellido
+            usuario.email = autor.email
+            usuario.save()
+
+            return redirect("mi_perfil")
+        
+    else:
+        form = EditarPerfilForm(instance=autor)
+    
+    return render(request,"mi_perfil.html",{"form":form,"autor":autor})
 # --------------------------------------------------
 # LISTA DE POSTS
 # --------------------------------------------------
@@ -105,15 +173,15 @@ def detalle_post(request, post_id):
 # CREAR POST
 # --------------------------------------------------
 
+@login_required
+
 def nuevo_post(request):
-    autores = Autor.objects.all()
+    autor = get_object_or_404(Autor,usuario=request.user)
 
     if request.method == "POST":
 
         titulo = request.POST["titulo"]
         contenido = request.POST["contenido"]
-        autor_id = request.POST["autor"]
-        autor = Autor.objects.get(id=autor_id)
         imagen = request.FILES.get("imagen")
 
         post = Post(titulo=titulo,autor=autor,contenido=contenido,imagen=imagen)
@@ -122,16 +190,20 @@ def nuevo_post(request):
 
         return redirect("lista_posts")
 
-    return render(request, "nuevo_post.html", {"autores":autores})
+    return render(request, "nuevo_post.html")
 
 
 # --------------------------------------------------
 # EDITAR POST
 # --------------------------------------------------
+@login_required
 
 def editar_post(request, post_id):
 
     post = get_object_or_404(Post, id=post_id)
+
+    if post.autor.usuario_id != request.user.id:
+        return redirect("lista_posts")
 
 
     if request.method == "POST":
@@ -155,10 +227,13 @@ def editar_post(request, post_id):
 # --------------------------------------------------
 # ELIMINAR POST
 # --------------------------------------------------
+@login_required
 
 def eliminar_post(request, post_id):
 
     post = get_object_or_404(Post, id= post_id)
+    if post.autor.usuario_id != request.user.id:
+        return redirect("lista_posts")
     post.delete()
 
     return redirect("lista_posts")
@@ -190,6 +265,7 @@ def contacto(request):
 # --------------------------------------------------
 # HACER UN COMENTARIO
 # --------------------------------------------------
+@login_required
 
 def dejar_comentario(request,post_id):
     post = get_object_or_404(Post,id=post_id)

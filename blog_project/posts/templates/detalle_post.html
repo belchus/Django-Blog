@@ -17,14 +17,12 @@
 {% empty %}
     <p>No hay comentarios para este post.</p>
 {% endfor %}
+{%if user.is_authenticated and post.autor.usuario_id == user.id %}
 
 <a href="{% url 'editar_post' post.id %}">
     Editar
 </a>
 
-<a href="{% url 'lista_posts' %}">
-    Volver
-</a>
 
 <form
     method="POST"
@@ -38,6 +36,11 @@
     </button>
 
 </form>
+{% endif %}
+<a href="{% url 'lista_posts' %}">
+    Volver
+</a>
+
 <a href="{% url 'dejar_comentario' post.id %}" class="btn btn-primary">Dejar comentario</a>
 
 {% endblock %}
