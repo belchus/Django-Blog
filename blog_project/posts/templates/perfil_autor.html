@@ -19,7 +19,9 @@
         <div class="col text-center text-md-start">
           <h1 class="h3 mb-1">{{ autor.nombre }} {{ autor.apellido }}</h1>
           <p class="text-body-secondary mb-2">@{{ autor.username }}</p>
-          <a href="{% url 'mi_perfil' %}">Editar perfil</a>
+          {% if user.is_authenticated and user.id == autor.usuario_id %}
+          <a href="{% url 'mi_perfil' %}">Editar pefil</a>
+          {% endif %}
           {% if posts %}
             <span class="badge text-bg-primary">{{ posts|length }} post{{ posts|length|pluralize }}</span>
           {% endif %}

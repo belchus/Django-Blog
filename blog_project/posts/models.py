@@ -37,3 +37,14 @@ class Comentario(models.Model):
 
     def __str__(self):
         return self.contenido
+    
+class Mensaje(models.Model):
+    remitente = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="mensajes_enviados")
+    destinatario = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="mensajes_recibidos")
+    asunto = models.CharField(max_length=150)
+    contenido = models.TextField()
+    fecha_envio = models.DateTimeField(auto_now=True)
+    leido = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.asunto}-{self.remitente.username}"

@@ -1,12 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth import login,logout
+from django.contrib import messages
+from django.contrib.auth import login,logout,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from .forms import ContactoForm, EditarPerfilForm, RegistroForm
-from .models import Autor, Comentario, Post
+from .models import Autor, Comentario, Mensaje, Post
 
+User = get_user_model()
 
 # --------------------------------------------------
 # REGISTRO
@@ -275,3 +277,74 @@ def dejar_comentario(request,post_id):
         return redirect("detalle_post",post_id = post.id)
     
     return render(request,"dejar_comentario.html",{"post":post})
+
+# --------------------------------------------------
+# BANDEJA DE ENTRADA
+# --------------------------------------------------
+
+@login_required
+
+def bandeja_entrada(request):
+    mensajes = Mensaje.objects.filter(
+        destinatario= request.user).order_by("-fecha_envio")
+    
+    return render(request,"bandeja_entrada.html",{"mensajes":mensajes})
+
+
+# --------------------------------------------------
+# BANDEJA DE LEIDOS
+# --------------------------------------------------
+
+@login_required
+
+def bandeja_enviados(request):
+    mensajes = Mensaje.objects.filter(
+        remitente= request.user).order_by("-fecha_envio")
+    
+    return render(request,"bandeja_enviados.html",{"mensajes":mensajes})
+
+# --------------------------------------------------
+# ENVIAR MENSAJE
+# --------------------------------------------------
+
+@login_required
+
+def enviar_mensaje(request):
+    usuarios = User.objects.exclude(id=request.user.id)
+    if request.method == "POST":
+        destinatario_id = request.POST.get("destinatario")
+        asunto = request.POST.get("asunto","").strip()
+        contenido = request.POST.get("contenido","").strip()
+
+        destinatario = get_object_or_404(User,id=destinatario_id) if destinatario_id else None
+
+        if destinatario is None or destinatario_id == request.user.id:
+            messages.error (request,"Selecciona un destinatarion valido")
+        elif not asunto or not contenido:
+            messages.error(request,"Completa el asunto y el mensaje")
+        
+        else:
+            Mensaje.objects.create(
+                remitente = request.user,
+                destinatario = destinatario,
+                asunto = asunto,
+                contenido = contenido
+            )
+            messages.success(request,"Mensaje enviado")
+            return redirect("bandeja_enviados")
+    return render( request,"enviar_mensaje.html",{"usuarios":usuarios})
+
+# --------------------------------------------------
+# LEER MENSAJE
+# --------------------------------------------------
+
+@login_required
+def leer_mensaje(request,mensaje_id):
+    mensaje = get_object_or_404(Mensaje,id=mensaje_id,destinatario=request.user)
+    if not mensaje.leido:
+        mensaje.leido = True
+        mensaje.save(update_fields=["leido"])
+    
+    return render(request,"leer_mensaje.html", {"mensaje":mensaje})
+
+

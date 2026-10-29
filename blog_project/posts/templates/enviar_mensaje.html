@@ -1,0 +1,39 @@
+
+{%extends "base.html"%}
+{%block title%}
+Nuevo mensaje
+{% endblock %}
+
+{% block content %}
+<h1>Nuevo mensaje</h1>
+{% if messages %}
+    {%for mensaje in messages%}
+    <div>{{mensaje}}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div>
+        <label for="destinatario">Destinatario</label>
+        <select name="destinatario" id="destinatario"><option value="">Elegi un usuario</option>
+            {% for usuario in usuarios %}
+            <option value="{{usuario.id}}">{{usuario.username}}</option>
+            {% endfor %}
+        </select>
+       
+    </div>
+    <div>
+        <label for="asunto">Asunto</label>
+        <input type="text" name="asunto" id="asunto">
+    </div>
+    <div>
+        <label for="contenido">Mensaje</label>
+        <textarea name="contenido" id="contenido" required></textarea>
+    </div>
+    <button type="submit">Enviar</button>
+    <a href="{% url 'bandeja_entrada' %}">Cancelar</a>
+</form>
+
+{%endblock%}

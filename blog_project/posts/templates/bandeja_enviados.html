@@ -1,0 +1,25 @@
+
+{%extends "base.html"%}
+{%block title%}
+Mensajes enviados
+{% endblock %}
+
+{% block content %}
+<h1>Mensajes enviados</h1>
+<a href="{% url 'bandeja_entrada' %}">Bandeja de entrada</a>
+<a href="{% url 'enviar_mensaje'%}"> + Nuevo mensaje</a>
+
+{% for mensaje in mensajes %}
+<div>
+    <h4>
+        {{mensaje.asunto}}
+    </h4>
+    <p>{{mensaje.destinatario.username}}</p>
+    <small>{{mensaje.fecha_envio}}</small>
+    <p>{{mensaje.contenido}}</p>
+
+    {% empty %}
+    <p>Todavia no tenes mensajes</p>
+
+{% endfor %}
+{%endblock%}

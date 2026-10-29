@@ -108,14 +108,14 @@
                     {% if user.is_authenticated %}
                 
                         <!-- El saludo lleva al perfil del usuario -->
-                        <a href="{% url 'mi_perfil' %}"
+                        <a href="{% url 'perfil_autor' user.perfil_autor.id %}"
                            class="nav-link text-white">
                             Hola, {{ user.username }}
                         </a>
                 
                         <!-- Mostramos el avatar si el usuario tiene perfil y foto -->
                         {% if user.perfil_autor.avatar %}
-                            <a href="{% url 'mi_perfil' %}">
+                            <a href="{% url 'perfil_autor' user.perfil_autor.id %}">
                                 <img
                                     src="{{ user.perfil_autor.avatar.url }}"
                                     alt="Avatar"
@@ -136,6 +136,7 @@
                                 Cerrar sesión
                             </button>
                         </form>
+                        <a href="{% url 'bandeja_entrada'%}">Chat</a>
                 
                     {% else %}
                 
